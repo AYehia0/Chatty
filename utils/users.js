@@ -18,7 +18,7 @@ const joinUser = (id, username, room) => {
   users.push(user)
 
   // writing
-  fs.writeFileSync(usersFile, JSON.stringify(users))
+  fs.writeFileSync(path.join(__dirname, usersFile), JSON.stringify(users) )
 
   return user
 }
@@ -36,7 +36,7 @@ const getUserById = (id) => {
   // reading users
   const users = getAllUsers()
 
-  const user = users.find((user) => user.id == id)
+  const user = users.find(user => user.id == id)
 
   return user
 }
@@ -46,12 +46,16 @@ const disconnectUser = (id) => {
   // reading users
   const users = getAllUsers()
 
-  const userInd = users.findIndex((user) => user.id == id)
+  const userInd = users.findIndex(user => user.id == id)
+
+  const user = users[userInd]
 
   users.splice(userInd, 1)
 
   // saving
-  fs.writeFileSync(usersFile, JSON.stringify(users))
+  fs.writeFileSync(path.join(__dirname, usersFile), JSON.stringify(users))
+
+  return user
 }
 
 module.exports = {

@@ -1,6 +1,11 @@
 // the socket
 const socket = io()
 
+// getting the username and room
+const { username, room } = Qs.parse(location.search, {
+  ignoreQueryPrefix: true,
+})
+
 // Document
 const messageForm = document.getElementById("chat-form")
 const chatMessagesDiv = document.querySelector(".chat-messages")
@@ -10,9 +15,9 @@ const addMessageToHtml = (message) => {
   const messageEl = document.createElement("div")
 
   // html
-  messageEl.innerHTML = `<p class="meta">Ahmed<span>12:29AM</span></p>
+  messageEl.innerHTML = `<p class="meta">${message.username} <span>${message.time}</span></p>
 
-  <p class="text">${message}</p>
+  <p class="text">${message.text}</p>
   `
 
   // the css message
@@ -21,6 +26,10 @@ const addMessageToHtml = (message) => {
   // appending to the chat window
   chatMessagesDiv.appendChild(messageEl)
 }
+
+// joining a room
+// catch it in the server side
+socket.emit("roomJoin", { username, room })
 
 socket.on("message", (message) => {
   // add the messages to the html

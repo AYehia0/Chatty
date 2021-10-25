@@ -48,14 +48,26 @@ const disconnectUser = (id) => {
 
   const userInd = users.findIndex(user => user.id == id)
 
-  const user = users[userInd]
+  if (userInd !== -1 ) {
+    const user = users[userInd]
 
-  users.splice(userInd, 1)
+    users.splice(userInd, 1)
 
-  // saving
-  fs.writeFileSync(path.join(__dirname, usersFile), JSON.stringify(users))
+    // saving
+    fs.writeFileSync(path.join(__dirname, usersFile), JSON.stringify(users))
 
-  return user
+    return user 
+  }
+
+}
+
+// room members 
+const getRoomMembers = (room) => {
+
+  const users = getAllUsers()
+
+  return users.filter(user => user.room == room)
+
 }
 
 module.exports = {
@@ -63,4 +75,5 @@ module.exports = {
   joinUser,
   getUserById,
   disconnectUser,
+  getRoomMembers
 }

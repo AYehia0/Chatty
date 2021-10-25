@@ -13,7 +13,7 @@ const disconnectMsg = "has been disconnected"
 
 // Users
 const {
-  getAllUsers,
+  getRoomMembers,
   getUserById,
   disconnectUser,
   joinUser,
@@ -45,6 +45,14 @@ io.on("connection", (socket) => {
     socket.broadcast
       .to(user.room)
       .emit("message", getMessageFormatted(bot, `${username} ${connectMsg}`))
+
+    // users in room
+    io.to(user.room).emit('roomUsers', {
+      room : user.room,
+      users: getRoomMembers(user.room)
+    })
+
+
   })
 
   // checking for chat messages
@@ -59,8 +67,20 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
 
     const user = disconnectUser(socket.id)
-    io.to(user.room).emit("message", getMessageFormatted(bot, `${user.username} ${disconnectMsg}` ))
+
+    // checking if the user is found 
+    if (user) {
+      io.to(user.room).emit("message", getMessageFormatted(bot, `${user.username} ${disconnectMsg}` ))
+
+      // updating the users in the room 
+      io.to(user.room).emit('roomUsers', {
+        room : user.room,
+        users: getRoomMembers(user.room)
+      })
+    }
+
   })
+
 })
 
 // serving the the static files : default is public
